@@ -4,6 +4,7 @@ package co.com.automatio.certification;
 
 import net.serenitybdd.junit5.SerenityJUnit5Extension;
 import net.serenitybdd.screenplay.Actor;
+import net.serenitybdd.screenplay.annotations.CastMember;
 import net.serenitybdd.screenplay.rest.abilities.CallAnApi;
 import net.serenitybdd.screenplay.rest.interactions.Get;
 import static net.serenitybdd.screenplay.rest.questions.ResponseConsequence.seeThatResponse;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class TestApiEmployees {
 
     private EnvironmentVariables environmentVariables;
+    @CastMember(name = "Sam")
     private Actor sam;
     private String theRestApiBaseUrl;
 
@@ -32,7 +34,8 @@ public class TestApiEmployees {
 
         theRestApiBaseUrl = environmentVariables.optionalProperty("restapi.baseurl")
                 .orElse("https://dummy.restapiexample.com/api/v1");
-        sam=Actor.named("Sam employers boss").whoCan(CallAnApi.at(theRestApiBaseUrl));
+        sam.whoCan(CallAnApi.at(theRestApiBaseUrl));
+
 
     }
 
@@ -40,12 +43,16 @@ public class TestApiEmployees {
     public void test(){
         sam.attemptsTo(
                 Get.resource("/employees")
+
         );
         sam.should(
                 seeThatResponse("Verify status",
-                        response->response.statusCode(200)
+                        response-> {
+                            response.statusCode(200);
+                        }
                         )
         );
+
 
     }
 
